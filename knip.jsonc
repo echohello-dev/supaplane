@@ -1,0 +1,28 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    "packages/protocol": {
+      "ignore": ["src/**/*.test.ts"],
+    },
+    "packages/client": {
+      "ignore": ["src/**/*.test.ts"],
+    },
+    "packages/server": {
+      "ignore": ["src/**/*.test.ts"],
+    },
+    "packages/cli": {},
+    "packages/web": {
+      "entry": ["src/main.tsx"],
+      "ignore": ["src/**/*"],
+    },
+    "packages/desktop": {
+      "entry": ["src/main.ts", "src/preload.ts"],
+    },
+    "packages/app": {
+      "entry": ["index.ts", "app/_layout.tsx", "app/index.tsx"],
+    },
+    ".": {},
+  },
+  "ignoreBinaries": ["mise"],
+  "ignoreExportsUsedInFile": true,
+}

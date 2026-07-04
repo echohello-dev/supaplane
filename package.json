@@ -1,0 +1,53 @@
+{
+  "name": "supaplane",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Supaplane — local-first multi-surface coding-agent workbench (née Spanner/Pidex/OpenPi)",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "mise run dev",
+    "build": "bun run build:protocol && bun run build:client && bun run build:server && bun run build:cli",
+    "build:protocol": "bunx tsc -p packages/protocol/tsconfig.json",
+    "build:client": "bun run build:protocol && bunx tsc -p packages/client/tsconfig.json",
+    "build:server-deps": "bun run build:client",
+    "build:server": "bun run build:server-deps && bunx tsc -p packages/server/tsconfig.json",
+    "build:cli": "bun run build:server && bunx tsc -p packages/cli/tsconfig.json",
+    "build:web": "bun run build:client && bun run --cwd packages/web build",
+    "build:desktop": "bun run build:server && bun run build:web && bun run --cwd packages/desktop typecheck",
+    "build:app": "bun run build:client && bun run --cwd packages/app typecheck",
+    "watch:protocol": "tsgo -p packages/protocol/tsconfig.json --watch --preserveWatchOutput",
+    "watch:client": "tsgo -p packages/client/tsconfig.json --watch --preserveWatchOutput",
+    "watch:server": "tsgo -p packages/server/tsconfig.json --watch --preserveWatchOutput",
+    "typecheck": "bun run build:protocol && bun run typecheck:protocol && bun run typecheck:client && bun run typecheck:server && bun run typecheck:cli && bun run typecheck:web",
+    "typecheck:protocol": "tsgo -p packages/protocol/tsconfig.typecheck.json --noEmit",
+    "typecheck:client": "bun run typecheck:protocol && tsgo -p packages/client/tsconfig.typecheck.json --noEmit",
+    "typecheck:server": "bun run typecheck:client && bunx tsc -p packages/server/tsconfig.json --noEmit",
+    "typecheck:cli": "bun run typecheck:server && tsgo -p packages/cli/tsconfig.typecheck.json --noEmit",
+    "typecheck:web": "tsgo -p packages/web/tsconfig.typecheck.json --noEmit",
+    "lint": "oxlint packages scripts",
+    "lint-fix": "oxlint --fix .",
+    "format": "oxfmt .",
+    "format-check": "oxfmt --check .",
+    "knip": "knip",
+    "test": "bunx vitest run",
+    "prepare": "lefthook install --force"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@typescript/native-preview": "7.0.0-dev.20260423.1",
+    "knip": "^5.82.1",
+    "lefthook": "^2.1.6",
+    "oxfmt": "0.46.0",
+    "oxlint": "1.61.0",
+    "oxlint-tsgolint": "^0.22.1",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "packageManager": "bun@1.3.14"
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@echohello/cli",
+  "version": "0.0.0",
+  "private": true,
+  "bin": {
+    "supaplane": "./src/index.ts"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "build:clean": "rm -rf dist && tsc -p tsconfig.json",
+    "typecheck": "tsgo -p tsconfig.typecheck.json --noEmit",
+    "test": "vitest run",
+    "lint": "oxlint src --config ../../oxlint.jsonc"
+  },
+  "dependencies": {
+    "@echohello/client": "workspace:*",
+    "@echohello/protocol": "workspace:*",
+    "@echohello/server": "workspace:*",
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "vitest": "^2.1.0"
+  }
+}

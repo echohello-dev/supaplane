@@ -1,0 +1,13 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "package-name": "supaplane",
+      "changelog-path": "CHANGELOG.md",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true,
+      "draft": false,
+      "include-component-in-tag": false
+    }
+  }
+}
