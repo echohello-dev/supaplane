@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "Supaplane",
+    "slug": "supaplane",
+    "version": "0.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "dev.echohello.supaplane"
+    },
+    "android": {
+      "package": "dev.echohello.supaplane"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": ["expo-router"]
+  }
+}

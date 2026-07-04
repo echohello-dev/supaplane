@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --color-supaplane-bg: #0a0a0f;
+  --color-supaplane-surface: #14141c;
+  --color-supaplane-accent: #7c3aed;
+  --color-supaplane-accent-soft: #5b21b6;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Cascadia Code", monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}

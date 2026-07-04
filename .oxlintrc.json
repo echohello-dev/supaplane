@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "import", "node", "react", "react-hooks", "jsx-a11y", "vitest"],
+  "categories": {
+    "correctness": "error",
+    "perf": "warn",
+    "style": "warn",
+    "restriction": "warn",
+    "suspicious": "error"
+  },
+  "rules": {
+    "no-console": "allow",
+    "no-unused-vars": "error",
+    "react/react-in-jsx-scope": "off",
+    "react/style-prop-object": "off",
+    "import/no-unassigned-import": "off",
+    "vitest/require-to-throw-message": "off"
+  },
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/node_modules/**",
+    "**/.turbo/**",
+    "**/coverage/**",
+    "**/.expo/**",
+    "**/.vite/**",
+    "**/*.generated.ts",
+    "**/patches/**",
+    ".agents/**"
+  ]
+}
