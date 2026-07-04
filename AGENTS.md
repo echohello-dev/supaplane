@@ -78,4 +78,15 @@ Never import backwards — if you find yourself needing to import `@echohello/we
 
 ## Skill system
 
-Supaplane ships agent skills in `skills/<name>/SKILL.md` (Paseo convention). Skills are installed via `npx skills add echohello-dev/supaplane`. The skill content teaches an external AI agent how to drive the Supaplane daemon via its MCP server tools (planned post-MVP).
+Supaplane ships agent skills in two locations, both using the Paseo/Supaplane `SKILL.md` convention:
+
+| Location                         | Audience                                                                                                              | Installed via                                  | Tracked?                                      |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
+| `skills/<name>/SKILL.md` (root)  | **External** users — published for the world to install                                                               | `npx skills add echohello-dev/supaplane`         | ✅ committed                                  |
+| `.agents/skills/<name>/SKILL.md` | **Internal** — auto-installed machine-local copies of third-party skills (e.g. `impeccable`, vendor-specific tooling) | Tool hooks (lefthook, opencode, claude, codex) | ✅ committed, with scoped `.gitignore` inside |
+
+The `.agents/skills/` convention keeps every skill in the same shape regardless of which tool installed it, so the same `SKILL.md` frontmatter (name + description) is machine-parseable everywhere. **Do not blanket-ignore `.agents/`** — only ignore caches/`node_modules`/dist inside the per-skill subdirs (the gitignore already does this scoped).
+
+When you auto-install a third-party skill, drop it under `.agents/skills/<name>/` with a `SKILL.md` and any scripts/references it needs, then commit. The root `skills/` tree stays curated; the `.agents/skills/` tree is the sink for everything auto-installed.
+
+The skill content teaches an external AI agent how to drive the Supaplane daemon via its MCP server tools (planned post-MVP).

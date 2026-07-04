@@ -79,12 +79,21 @@ packages/desktop/node_modules/
 # Generated
 packages/*/src/**/generated/
 
-# Tool-installed skills and runtime state (auto-installed, not part of the repo)
-.agents/
+# Tool runtime state (auto-installed, not part of the repo)
 .opencode/
 .claude/
 .codex/
 .cursor/
-.github/hooks/
-.github/skills/
 .impeccable/
+
+# .github/hooks/ is tool-installed runtime state
+.github/hooks/
+# but .github/workflows/ stays tracked
+
+# .agents/skills/<name>/ is tracked (committed agent skills, Paseo convention)
+# but caches / node_modules inside skill dirs are still ignored
+.agents/**/node_modules/
+.agents/**/.cache/
+.agents/**/dist/
+.agents/**/*.log
+.agents/**/.DS_Store
