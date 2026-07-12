@@ -2,7 +2,7 @@
   "name": "supaplane",
   "version": "0.0.0",
   "private": true,
-  "description": "Supaplane — local-first multi-surface coding-agent workbench (née Spanner/Pidex/OpenPi)",
+  "description": "Bring your coding agents and friends. Import your harnesses and fly them in parallel from desktop, web, or phone.",
   "license": "MIT",
   "workspaces": [
     "packages/*"
