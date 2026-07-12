@@ -1,70 +1,100 @@
-# supaplane
+<div align="center">
 
-Local-first, multi-surface coding-agent workbench. Built for daily use across desktop, web, and mobile, with a single supervised daemon that owns agent lifecycle, worktrees, and remote access.
+# Supaplane
 
-Supaplane (née Spanner, née Pidex, née OpenPi) is a personal project under the [echohello](https://echohello.dev) org. Companion installer: [`hoist`](https://github.com/echohello-dev/hoist).
+**Bring your coding agents and friends.**
+Import your harnesses and fly them in parallel from desktop, web, or phone.
 
-## Status
+[Website](https://supaplane.com) · [Architecture](docs/architecture.md) · [Onboarding](docs/onboarding-relay.md) · [Providers](docs/providers.md) · [Development](docs/development.md)
 
-🚧 Greenfield scaffold. See the build-research notes in `docs/` for the architectural decisions:
+[![License: MIT](https://img.shields.io/github/license/echohello-dev/supaplane)](LICENSE)
+[![Node 22+](https://img.shields.io/badge/node-22%2B-blue)](https://nodejs.org)
+[![Bun](https://img.shields.io/badge/package%20manager-bun-f9f1e1)](https://bun.sh)
 
-- `docs/architecture.md` — overall architecture
-- `docs/onboarding-relay.md` — pairing, relay, settings sync
-- `docs/providers.md` — agent runtime integrations
+</div>
+
+## What this is
+
+Supaplane is a multi-surface workbench for coding agents. Bring Claude Code, Codex, OpenCode, Cursor, and friends. Import the harnesses you already use, get back to speed, and run them in parallel from desk, browser, or phone.
+
+A single supervised daemon owns agent lifecycle, worktrees, and remote access. Surfaces are thin clients over that daemon, not separate apps fighting for the same repo.
+
+Formerly Spanner (née Pidex, née OpenPi). Personal project under [echohello](https://echohello.dev). Companion installer: [`hoist`](https://github.com/echohello-dev/hoist).
+
+## How it sits in the sky
+
+| | Local / self-hosted | Multi-vendor | Multi-surface | Open source |
+|---|---|---|---|---|
+| **T3 Code** | yes | yes | web / desktop | MIT |
+| **Paseo** | yes | yes | desk + phone | AGPL |
+| **Conductor** | yes (Mac) | yes | desktop | closed |
+| **Superconductor** | cloud-first | yes | desk + mobile + Slack | closed |
+| **OpenChamber** | yes | OpenCode-first | desk + web + phone | MIT |
+| **Supaplane** | yes (daemon you control) | yes | desk + web + phone | MIT |
+
+The open lane is local control, any harness, every surface. That is the runway we are on.
 
 ## Surfaces (MVP)
 
-- **Desktop** — Electron shell that spawns and supervises the daemon.
-- **PWA** — `@echohello/web` serves as a PWA; also reachable over the E2E-encrypted relay from any browser.
-- **Mobile** — `@echohello/app` is a native Expo / React Native iOS + Android client.
+| Surface | Package | Role |
+|---|---|---|
+| Desktop | `@echohello/desktop` | Electron shell that spawns and supervises the daemon |
+| PWA / web | `@echohello/web` | Vite + React renderer; works on the relay too |
+| Mobile | `@echohello/app` | Expo / React Native companion |
+| CLI | `@echohello/cli` | `supaplane` commands for daemon, agent, provider, worktree |
 
 ## Quick start
 
+Greenfield scaffold. Expect rough edges.
+
 ```bash
-# Toolchain (mise installs node + bun)
-mise install
-
-# Install deps (bun workspaces)
-bun install
-
-# Build the dependency chain (protocol → client → server)
-bun run build
-
-# Run the daemon (dev)
-mise run dev:daemon
-
-# In another terminal — start the web renderer
-mise run dev:web
-
-# In another terminal — start the desktop shell (with daemon already running)
-mise run dev:desktop
+mise install          # node + bun via mise
+bun install           # workspace deps
+bun run build         # protocol → client → server → cli
+mise run dev:daemon   # supervised daemon
 ```
+
+In other terminals:
+
+```bash
+mise run dev:web      # web / PWA renderer
+mise run dev:desktop  # Electron shell (daemon already running)
+```
+
+More detail in [docs/development.md](docs/development.md).
 
 ## Monorepo layout
 
 ```
 packages/
-├── protocol/   # Zod schemas + binary frame codecs — the contract everything hangs off
-├── client/     # WS driver + SupaplaneClient facade (used by web, desktop, app, cli)
-├── server/     # Standalone supervised daemon — Express 5 + ws 8 + Pino
-├── cli/        # Commander-style commands (daemon, agent, provider, worktree)
-├── web/        # Vite 8 + React 19 + Tailwind 4 + Pretext (desktop + PWA renderer)
-├── desktop/    # Electron 41 shell (spawns/supervises daemon)
-├── app/        # Expo 54 + RN 0.81 mobile renderer
+├── protocol/   # Zod schemas + frame codecs (the contract)
+├── client/     # WS driver + SupaplaneClient facade
+├── server/     # Standalone daemon (Express 5 + ws + Pino)
+├── cli/        # Commander-style commands
+├── web/        # Vite 8 + React 19 + Tailwind 4 + Pretext
+├── desktop/    # Electron 41 shell
+├── app/        # Expo 54 + RN mobile
 └── relay/      # E2E-encrypted relay (post-MVP)
 
-skills/         # Published agent skills (installed via npx skills)
-docs/           # Architecture, onboarding, provider maps
+docs/           # Architecture, onboarding, providers, development
 ```
 
 ## Provider priorities (MVP)
 
-1. **OpenCode** (`@opencode-ai/sdk`) — first provider
-2. **Cursor** (`@agentclientprotocol/sdk`) — proves the ACP path
+1. **OpenCode** (`@opencode-ai/sdk`) - first provider
+2. **Cursor** (`@agentclientprotocol/sdk`) - proves the ACP path
 3. **Claude Code** (`@anthropic-ai/claude-agent-sdk`)
-4. **MCP server** (`@modelcontextprotocol/sdk`) for agent-to-agent orchestration
-5. Codex, Copilot, Pi/OMP — Paseo parity, post-MVP
+4. **MCP server** (`@modelcontextprotocol/sdk`) for agent-to-agent work
+5. Codex, Copilot, Pi/OMP - later, Paseo parity
+
+See [docs/providers.md](docs/providers.md).
+
+## Project status
+
+Alpha scaffold. Daemon, protocol, client, and surface stubs are in place. CI and release-please are follow-ups. Architecture decisions live in `docs/` and the build-research notes that fed this repo.
 
 ## License
 
-MIT. See `LICENSE`.
+MIT. See [LICENSE](LICENSE).
+
+Made to fly with open harnesses and a daemon you own.
