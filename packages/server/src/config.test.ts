@@ -5,7 +5,7 @@ describe("loadDaemonConfig", () => {
   it("returns defaults when no env vars are set", () => {
     const cfg = loadDaemonConfig({});
     expect(cfg.listenHost).toBe("127.0.0.1");
-    expect(cfg.listenPort).toBe(6767);
+    expect(cfg.listenPort).toBe(17687);
     expect(cfg.logLevel).toBe("info");
     expect(cfg.relayEnabled).toBe(false);
     expect(cfg.appBaseUrl).toBe("https://app.supaplane.com");
