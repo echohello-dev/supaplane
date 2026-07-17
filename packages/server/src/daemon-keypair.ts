@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { z } from "zod";
-import { createHash } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 
 /**
  * NaCl box (Curve25519 ECDH + XSalsa20-Poly1305) keypair for the daemon's
@@ -30,8 +30,8 @@ export interface DaemonKeyPair {
 }
 
 function placeholderKeyPair(): DaemonKeyPair {
-  const seed = require("node:crypto").randomBytes(32);
-  const publicKey = require("node:crypto").createHash("sha256").update(seed).digest();
+  const seed = randomBytes(32);
+  const publicKey = createHash("sha256").update(seed).digest();
   const secretKey = seed;
   const publicKeyB64 = publicKey.toString("base64");
   const secretKeyB64 = secretKey.toString("base64");
