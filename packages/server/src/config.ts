@@ -11,8 +11,8 @@ import { z } from "zod";
 export const DaemonConfigSchema = z.object({
   /** Bind host for the WebSocket + HTTP listener. Default `127.0.0.1` (no LAN). */
   listenHost: z.string().default("127.0.0.1"),
-  /** Bind port. Default 6767 (matches Paseo). */
-  listenPort: z.number().int().positive().default(6767),
+  /** Bind port. Default 17687 (avoids Paseo on 6767 and other well-known dev ports). */
+  listenPort: z.number().int().positive().default(17687),
   /** Log level. */
   logLevel: z.enum(["trace", "debug", "info", "warn", "error", "fatal"]).default("info"),
   /** Path to the daemon log file (rotated by `rotating-file-stream` if set). */
@@ -38,7 +38,9 @@ export type DaemonConfig = z.infer<typeof DaemonConfigSchema>;
 export function loadDaemonConfig(env: NodeJS.ProcessEnv = process.env): DaemonConfig {
   const raw = {
     listenHost: env.SUPAPLANE_LISTEN_HOST,
-    listenPort: env.SUPAPLANE_LISTEN_PORT ? Number.parseInt(env.SUPAPLANE_LISTEN_PORT, 10) : undefined,
+    listenPort: env.SUPAPLANE_LISTEN_PORT
+      ? Number.parseInt(env.SUPAPLANE_LISTEN_PORT, 10)
+      : undefined,
     logLevel: env.SUPAPLANE_LOG_LEVEL,
     logFile: env.SUPAPLANE_LOG_FILE,
     pairingQr: env.SUPAPLANE_PAIRING_QR

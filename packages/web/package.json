@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -p tsconfig.typecheck.json --noEmit && vite build",
-    "preview": "vite preview --port 5173",
+    "preview": "vite preview --port 5179",
     "typecheck": "tsgo -p tsconfig.typecheck.json --noEmit",
     "lint": "oxlint src --config ../../oxlint.jsonc"
   },

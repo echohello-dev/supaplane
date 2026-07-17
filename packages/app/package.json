@@ -8,12 +8,13 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "typecheck": "tsgo --noEmit",
+    "typecheck": "tsgo -p tsconfig.typecheck.json --noEmit",
     "lint": "oxlint . --config ../../oxlint.jsonc"
   },
   "dependencies": {
     "@echohello/client": "workspace:*",
     "@echohello/protocol": "workspace:*",
+    "@react-native-async-storage/async-storage": "^3.1.1",
     "expo": "^54.0.18",
     "expo-router": "~6.0.13",
     "expo-status-bar": "~3.0.8",

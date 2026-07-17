@@ -56,7 +56,7 @@ bun run knip         # dead-code detection
 # Run the daemon in dev mode (auto-reload on src/ changes)
 mise run dev:daemon
 
-# Run the web renderer (Vite HMR on http://127.0.0.1:5173)
+# Run the web renderer (Vite HMR on http://127.0.0.1:5179)
 mise run dev:web
 
 # Run the desktop shell (Electron + the running daemon)
@@ -66,7 +66,7 @@ mise run dev:desktop
 mise run dev:all
 ```
 
-The Vite dev server proxies `/api` and `/ws` to `http://127.0.0.1:6767` (the daemon). The desktop shell expects the daemon to be running separately.
+The Vite dev server proxies `/api` and `/ws` to `http://127.0.0.1:17687` (the daemon). The desktop shell expects the daemon to be running separately. Default ports avoid conflicts with Paseo (6767), Vite default (5173), Metro/Expo (8081, 19000), and other well-known dev tools.
 
 ## Day-to-day workflow
 
