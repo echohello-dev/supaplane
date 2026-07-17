@@ -12,6 +12,12 @@ The architectural decisions are documented in `docs/` — read them before makin
 
 If you need to know _why_ a decision was made, the build-research notes in the operator's Obsidian vault (`/Users/johnny/projects/github.com/johnnyhuy/one-obsidian/Notes/2026-06-26 - Spanner*.md`) contain the full reasoning.
 
+## Default dev ports
+
+- Daemon (HTTP + WS): `17687` — avoids Paseo (`6767`), HTTP (`8080`), Metro/Expo (`8081`).
+- Web renderer (Vite): `5179` — sits next to Vite's default `5173` so it's recognisable.
+- Override with `SUPAPLANE_LISTEN_PORT`, `SUPAPLANE_DAEMON_PORT`, `SUPAPLANE_WEB_PORT`, or `VITE_PORT` env vars.
+
 ## Build / dev commands
 
 ```bash
@@ -82,7 +88,7 @@ Supaplane ships agent skills in two locations, both using the Paseo/Supaplane `S
 
 | Location                         | Audience                                                                                                              | Installed via                                  | Tracked?                                      |
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
-| `skills/<name>/SKILL.md` (root)  | **External** users — published for the world to install                                                               | `npx skills add echohello-dev/supaplane`         | ✅ committed                                  |
+| `skills/<name>/SKILL.md` (root)  | **External** users — published for the world to install                                                               | `npx skills add echohello-dev/supaplane`       | ✅ committed                                  |
 | `.agents/skills/<name>/SKILL.md` | **Internal** — auto-installed machine-local copies of third-party skills (e.g. `impeccable`, vendor-specific tooling) | Tool hooks (lefthook, opencode, claude, codex) | ✅ committed, with scoped `.gitignore` inside |
 
 The `.agents/skills/` convention keeps every skill in the same shape regardless of which tool installed it, so the same `SKILL.md` frontmatter (name + description) is machine-parseable everywhere. **Do not blanket-ignore `.agents/`** — only ignore caches/`node_modules`/dist inside the per-skill subdirs (the gitignore already does this scoped).

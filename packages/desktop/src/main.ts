@@ -13,8 +13,16 @@ let mainWindow: BrowserWindow | null = null;
 async function ensureDaemon(): Promise<DaemonHandle> {
   if (daemonHandle) return daemonHandle;
   log.info("starting embedded Supaplane daemon");
+  const configOverrides: { listenPort?: number; listenHost?: string } = {};
+  const envPort = process.env.SUPAPLANE_LISTEN_PORT;
+  if (envPort && !Number.isNaN(Number.parseInt(envPort, 10))) {
+    configOverrides.listenPort = Number.parseInt(envPort, 10);
+  }
+  const envHost = process.env.SUPAPLANE_LISTEN_HOST;
+  if (envHost) configOverrides.listenHost = envHost;
   daemonHandle = await startDaemon({
     supaplaneHome: path.join(app.getPath("userData"), "supaplane-home"),
+    ...(Object.keys(configOverrides).length > 0 ? { config: configOverrides } : {}),
   });
   return daemonHandle;
 }
@@ -39,7 +47,8 @@ function createMainWindow(): BrowserWindow {
   win.once("ready-to-show", () => win.show());
 
   if (isDev) {
-    void win.loadURL("http://127.0.0.1:5173");
+    const webPort = process.env.SUPAPLANE_WEB_PORT ?? "5179";
+    void win.loadURL(`http://127.0.0.1:${webPort}`);
     win.webContents.openDevTools({ mode: "detach" });
   } else {
     void win.loadFile(path.join(__dirname, "..", "..", "web", "dist", "index.html"));
