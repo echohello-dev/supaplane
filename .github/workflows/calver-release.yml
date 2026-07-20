@@ -1,0 +1,36 @@
+name: calver-release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: compute calver tag
+        id: calver
+        run: |
+          base="$(date -u +%Y.%m.%d)"
+          git fetch --tags --quiet
+          tag="$base"
+          if git rev-parse -q --verify "refs/tags/$tag" > /dev/null; then
+            n=2
+            while git rev-parse -q --verify "refs/tags/$base-$n" > /dev/null; do
+              n=$((n + 1))
+            done
+            tag="$base-$n"
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: create release
+        run: gh release create "${{ steps.calver.outputs.tag }}" --generate-notes --title "${{ steps.calver.outputs.tag }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
