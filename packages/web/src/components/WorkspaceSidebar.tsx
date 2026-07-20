@@ -4,9 +4,11 @@ import type { WorkspaceState } from "@echohello/protocol";
 
 interface Props {
   client: SupaplaneClient | null;
+  /** Fired when the user clicks "Open diff" on a workspace card. */
+  onDemoDiff?: (workspaceId: string) => void;
 }
 
-export function WorkspaceSidebar({ client }: Props) {
+export function WorkspaceSidebar({ client, onDemoDiff }: Props) {
   const [workspaces, setWorkspaces] = useState<WorkspaceState[]>([]);
 
   useEffect(() => {
@@ -57,6 +59,14 @@ export function WorkspaceSidebar({ client }: Props) {
               </span>
             </div>
             <div className="truncate text-xs text-neutral-500">{ws.branch ?? "no branch"}</div>
+            {onDemoDiff ? (
+              <button
+                onClick={() => onDemoDiff(ws.workspaceId)}
+                className="mt-2 rounded border border-neutral-700 bg-neutral-950 px-2 py-1 text-xs text-neutral-300 transition hover:border-supaplane-accent hover:text-supaplane-accent"
+              >
+                Open diff
+              </button>
+            ) : null}
           </li>
         ))}
       </ul>
