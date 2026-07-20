@@ -33,6 +33,7 @@ jobs:
         with:
           install: true
       - run: bun install --frozen-lockfile
+      - run: bun run build
       - run: bun run typecheck
 
   test:
@@ -44,6 +45,7 @@ jobs:
         with:
           install: true
       - run: bun install --frozen-lockfile
+      - run: bun run build
       - run: bun run test
 
   build:
