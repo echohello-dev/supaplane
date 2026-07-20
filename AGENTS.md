@@ -78,7 +78,7 @@ Never import backwards — if you find yourself needing to import `@echohello/we
 
 ## Git
 
-- Branch from `main`. Conventional commits (release-please manages versions).
+- Branch from `main`. Conventional commits for readability (calver tags are stamped on push to main, not derived from commit messages).
 - PRs target `main`. CI runs typecheck + lint + test.
 - Never commit `.env`, `dist/`, `node_modules/`, `*.log`, `daemon-keypair.json`, `server-id`.
 
