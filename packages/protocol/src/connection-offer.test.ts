@@ -20,7 +20,7 @@ describe("connection-offer", () => {
       offer: SAMPLE_OFFER,
       appBaseUrl: "https://app.supaplane.com",
     });
-    expect(url).toMatch(/^https:\/\/app\.supaplane\.run\/#offer=/);
+    expect(url).toMatch(/^https:\/\/app\.supaplane\.com\/#offer=/);
     const parsed = parseConnectionOfferFromUrl(url);
     expect(parsed).toEqual(SAMPLE_OFFER);
   });
