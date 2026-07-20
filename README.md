@@ -91,7 +91,7 @@ See [docs/providers.md](docs/providers.md).
 
 ## Project status
 
-Alpha scaffold. Daemon, protocol, client, and surface stubs are in place. CI and release-please are follow-ups. Architecture decisions live in `docs/` and the build-research notes that fed this repo.
+Alpha scaffold. Daemon, protocol, client, and surface stubs are in place. CI runs on every PR; calver `YYYY.MM.DD[-N]` release tags are stamped on every push to main. Architecture decisions live in `docs/` and the build-research notes that fed this repo.
 
 ## License
 
