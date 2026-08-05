@@ -88,6 +88,22 @@ export class AgentManager {
     return provider;
   }
 
+  listModels(providerId: string) {
+    return this.getProvider(providerId).listModels();
+  }
+
+  listModes(providerId: string) {
+    return this.getProvider(providerId).listModes();
+  }
+
+  async getDiagnostic(providerId: string): Promise<{ diagnostic: string }> {
+    const provider = this.getProvider(providerId);
+    if (!provider.getDiagnostic) {
+      return { diagnostic: "no diagnostic available" };
+    }
+    return provider.getDiagnostic();
+  }
+
   async startSession(args: StartSessionArgs): Promise<SessionState> {
     const provider = this.getProvider(args.providerId);
     const sessionId = newSessionId();

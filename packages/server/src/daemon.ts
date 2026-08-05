@@ -10,6 +10,7 @@ import { AgentManager } from "./server/agent/agent-manager.js";
 import { HandleStore } from "./server/agent/handle-store.js";
 import { ClaudeAgentClient } from "./server/agent/providers/claude/claude-provider.js";
 import { CommandDispatcher } from "./server/command-dispatcher.js";
+import { RpcRouter } from "./server/rpc-router.js";
 import { WorkspaceRegistry } from "./server/workspace-registry.js";
 import { SupaplaneWebsocketServer } from "./websocket-server.js";
 
@@ -96,6 +97,9 @@ export async function startDaemon(args?: {
         }),
     }),
   );
+
+  const rpcRouter = new RpcRouter({ workspaces, agents: agentManager, logger });
+  wsServer.setRpcHandler((req) => rpcRouter.handle(req));
 
   await new Promise<void>((resolve, reject) => {
     const onError = (err: Error) => {
