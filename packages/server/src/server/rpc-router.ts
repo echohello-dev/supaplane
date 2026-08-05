@@ -4,14 +4,17 @@ import { SupaplaneError, type RpcRequest, type RpcResponse } from "@echohello/pr
 
 import type { AgentManager } from "./agent/agent-manager.js";
 import type { WorkspaceRegistry } from "./workspace-registry.js";
+import type { WorktreeService } from "./worktree-service.js";
 
 export interface RpcRouterOptions {
   workspaces: WorkspaceRegistry;
   agents: AgentManager;
+  worktrees: WorktreeService;
   logger: Logger;
 }
 
 const ProviderArgsSchema = z.object({ providerId: z.string().min(1) });
+const WorkspaceArgsSchema = z.object({ workspaceId: z.string().min(1) });
 const SessionListArgsSchema = z.object({ workspaceId: z.string().optional() });
 
 /**
@@ -22,11 +25,13 @@ const SessionListArgsSchema = z.object({ workspaceId: z.string().optional() });
 export class RpcRouter {
   readonly #workspaces: WorkspaceRegistry;
   readonly #agents: AgentManager;
+  readonly #worktrees: WorktreeService;
   readonly #logger: Logger;
 
   constructor(options: RpcRouterOptions) {
     this.#workspaces = options.workspaces;
     this.#agents = options.agents;
+    this.#worktrees = options.worktrees;
     this.#logger = options.logger.child({ module: "rpc-router" });
   }
 
@@ -60,6 +65,10 @@ export class RpcRouter {
         return this.#agents.getDiagnostic(this.#providerId(req));
       case "workspace.list":
         return { workspaces: this.#workspaces.list() };
+      case "worktree.list": {
+        const args = WorkspaceArgsSchema.parse(req.args);
+        return { worktrees: await this.#worktrees.listWorktrees(args.workspaceId) };
+      }
       case "session.list": {
         const args = SessionListArgsSchema.parse(req.args ?? {});
         return { sessions: this.#agents.listSessions(args.workspaceId) };

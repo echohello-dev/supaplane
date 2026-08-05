@@ -24,6 +24,7 @@ export { ClaudeAgentClient } from "./agent/providers/claude/claude-provider.js";
 export { ClaudeToolCallMapper } from "./agent/providers/claude/tool-call-mapper.js";
 export { CommandDispatcher, type CommandContext } from "./command-dispatcher.js";
 export { WorkspaceRegistry } from "./workspace-registry.js";
+export { WorktreeService, parseWorktreeList, type WorktreeInfo } from "./worktree-service.js";
 export type {
   AgentClient,
   AgentEventSink,

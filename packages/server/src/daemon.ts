@@ -13,6 +13,7 @@ import { buildProviders } from "./server/agent/provider-factory.js";
 import { CommandDispatcher } from "./server/command-dispatcher.js";
 import { RpcRouter } from "./server/rpc-router.js";
 import { WorkspaceRegistry } from "./server/workspace-registry.js";
+import { WorktreeService } from "./server/worktree-service.js";
 import { SupaplaneWebsocketServer } from "./websocket-server.js";
 
 export interface DaemonHandle {
@@ -24,6 +25,7 @@ export interface DaemonHandle {
   wsServer: SupaplaneWebsocketServer;
   agentManager: AgentManager;
   workspaces: WorkspaceRegistry;
+  worktreeService: WorktreeService;
 }
 
 /**
@@ -71,6 +73,7 @@ export async function startDaemon(args?: {
     agentManager.registerProvider(provider);
   }
   const workspaces = new WorkspaceRegistry();
+  const worktreeService = new WorktreeService({ workspaces, logger });
 
   const wsServer = new SupaplaneWebsocketServer({
     httpServer,
@@ -87,6 +90,7 @@ export async function startDaemon(args?: {
   const dispatcher = new CommandDispatcher({
     workspaces,
     agents: agentManager,
+    worktrees: worktreeService,
     broadcast: (event) => wsServer.broadcast(event),
     logger,
   });
@@ -102,7 +106,12 @@ export async function startDaemon(args?: {
     }),
   );
 
-  const rpcRouter = new RpcRouter({ workspaces, agents: agentManager, logger });
+  const rpcRouter = new RpcRouter({
+    workspaces,
+    agents: agentManager,
+    worktrees: worktreeService,
+    logger,
+  });
   wsServer.setRpcHandler((req) => rpcRouter.handle(req));
 
   await new Promise<void>((resolve, reject) => {
@@ -129,6 +138,7 @@ export async function startDaemon(args?: {
     wsServer,
     agentManager,
     workspaces,
+    worktreeService,
     async stop(): Promise<void> {
       logger.info("stopping daemon");
       await agentManager.disposeAll();
