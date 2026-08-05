@@ -15,6 +15,8 @@ import { getOrCreateServerId } from "./server-id.js";
 export interface WebsocketSessionContext {
   serverId: string;
   serverVersion: string;
+  /** Provider ids advertised in the `hello_ack` capabilities. */
+  providers: readonly string[];
   daemonLabel?: string;
   logger: Logger;
 }
@@ -51,7 +53,7 @@ export function handleHello(args: {
     serverVersion: args.ctx.serverVersion,
     protocolVersion: SUPAPLANE_PROTOCOL_VERSION,
     capabilities: {
-      providers: ["opencode", "claude", "cursor"],
+      providers: [...args.ctx.providers],
       relay: false,
       worktrees: false,
       scheduling: false,
