@@ -8,6 +8,8 @@ import {
   type ClientType,
   EnvelopeSchema,
   type HelloAckMessage,
+  type RpcRequest,
+  type RpcResponse,
   type ServerEvent,
 } from "@echohello/protocol";
 
@@ -29,6 +31,7 @@ export interface WebsocketServerOptions {
   daemonLabel?: string;
   serverVersion: string;
   onCommand?: (cmd: ClientCommand, session: SessionRecord) => void;
+  onRpc?: (req: RpcRequest, session: SessionRecord) => Promise<RpcResponse>;
   /** Provider ids advertised in the `hello_ack` capabilities. */
   providers?: readonly string[];
 }
@@ -51,6 +54,7 @@ export class SupaplaneWebsocketServer {
   #serverVersion: string;
   #daemonLabel: string | undefined;
   #onCommand?: (cmd: ClientCommand, session: SessionRecord) => void;
+  #onRpc?: (req: RpcRequest, session: SessionRecord) => Promise<RpcResponse>;
   #providers: readonly string[];
 
   constructor(options: WebsocketServerOptions) {
@@ -84,6 +88,11 @@ export class SupaplaneWebsocketServer {
   /** Install the command handler after construction (breaks the daemon/dispatcher init cycle). */
   setCommandHandler(handler: (cmd: ClientCommand, session: SessionRecord) => void): void {
     this.#onCommand = handler;
+  }
+
+  /** Install the RPC handler after construction. */
+  setRpcHandler(handler: (req: RpcRequest, session: SessionRecord) => Promise<RpcResponse>): void {
+    this.#onRpc = handler;
   }
 
   /** Broadcast a server event to all connected sessions that have subscribed to its topic. */
@@ -175,8 +184,16 @@ export class SupaplaneWebsocketServer {
             return;
           }
           this.#onCommand?.(cmd, session);
+          return;
         }
-        // RPC request/response envelopes are routed via SupaplaneClient.rpc(), not here.
+        if ("rpc" in envelope && !("kind" in envelope) && this.#onRpc) {
+          void this.#onRpc(envelope, session)
+            .then((response) => this.sendTo(socket, response))
+            .catch((err: unknown) => {
+              this.#logger.warn({ err, rpc: envelope.rpc }, "rpc handler failed");
+            });
+          return;
+        }
         // Server events flow outbound via broadcast(). `hello`/`hello_ack` are
         // handshake-only and are caught at the connection boundary above.
       } catch (err) {

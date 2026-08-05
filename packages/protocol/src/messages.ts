@@ -303,6 +303,7 @@ export const RpcRequestSchema = z.object({
 export type RpcRequest = z.infer<typeof RpcRequestSchema>;
 
 export const RpcResponseSchema = z.object({
+  kind: z.literal("rpc_response"),
   rpc: z.string(),
   requestId: z.string(),
   ok: z.boolean(),
