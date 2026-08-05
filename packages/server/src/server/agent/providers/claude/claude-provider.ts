@@ -48,6 +48,8 @@ const MODE_TO_PERMISSION: Record<string, PermissionMode> = {
 };
 
 export interface ClaudeAgentClientOptions {
+  /** Override the provider id (used by config overlays that alias the provider). */
+  id?: string;
   /** Provider binary + args, e.g. `["claude"]`. */
   command?: string[];
 }
@@ -58,10 +60,11 @@ export interface ClaudeAgentClientOptions {
  * async queue after the `system/init` message yields the upstream session id.
  */
 export class ClaudeAgentClient implements AgentClient {
-  readonly providerId = "claude";
+  readonly providerId: string;
   readonly #command: string[];
 
   constructor(options: ClaudeAgentClientOptions = {}) {
+    this.providerId = options.id ?? "claude";
     this.#command = options.command ?? ["claude"];
   }
 

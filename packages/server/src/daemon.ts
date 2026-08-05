@@ -7,8 +7,9 @@ import { createHttpApp } from "./http-app.js";
 import { createLogger } from "./logger.js";
 import { resolveSupaplaneHome, SUPAPLANE_VERSION } from "./paths.js";
 import { AgentManager } from "./server/agent/agent-manager.js";
+import { loadConfigOverlay, providerOverridesFromOverlay } from "./server/agent/config-overlay.js";
 import { HandleStore } from "./server/agent/handle-store.js";
-import { ClaudeAgentClient } from "./server/agent/providers/claude/claude-provider.js";
+import { buildProviders } from "./server/agent/provider-factory.js";
 import { CommandDispatcher } from "./server/command-dispatcher.js";
 import { RpcRouter } from "./server/rpc-router.js";
 import { WorkspaceRegistry } from "./server/workspace-registry.js";
@@ -65,7 +66,10 @@ export async function startDaemon(args?: {
 
   const handleStore = new HandleStore(supaplaneHome);
   const agentManager = new AgentManager({ handleStore, logger });
-  agentManager.registerProvider(new ClaudeAgentClient());
+  const overlay = await loadConfigOverlay(supaplaneHome);
+  for (const provider of buildProviders(providerOverridesFromOverlay(overlay), logger)) {
+    agentManager.registerProvider(provider);
+  }
   const workspaces = new WorkspaceRegistry();
 
   const wsServer = new SupaplaneWebsocketServer({

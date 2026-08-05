@@ -8,6 +8,17 @@ export { resolveSupaplaneHome, SUPAPLANE_VERSION } from "../paths.js";
 export { getOrCreateServerId } from "../server-id.js";
 export { loadOrCreateDaemonKeyPair, type DaemonKeyPair } from "../daemon-keypair.js";
 export { AgentManager } from "./agent/agent-manager.js";
+export {
+  loadConfigOverlay,
+  providerOverridesFromOverlay,
+  ConfigOverlaySchema,
+  type ConfigOverlay,
+} from "./agent/config-overlay.js";
+export { buildProviders } from "./agent/provider-factory.js";
+export { AcpAgentClient } from "./agent/providers/acp/acp-provider.js";
+export { CursorAgentClient } from "./agent/providers/cursor/cursor-provider.js";
+export { OpenCodeAgentClient } from "./agent/providers/opencode/opencode-provider.js";
+export { OpenCodeToolCallMapper } from "./agent/providers/opencode/tool-call-mapper.js";
 export { HandleStore, sanitizeCwd } from "./agent/handle-store.js";
 export { ClaudeAgentClient } from "./agent/providers/claude/claude-provider.js";
 export { ClaudeToolCallMapper } from "./agent/providers/claude/tool-call-mapper.js";
