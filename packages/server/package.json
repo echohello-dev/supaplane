@@ -31,6 +31,7 @@
     "lint": "oxlint src --config ../../oxlint.jsonc"
   },
   "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.222",
     "@echohello/client": "workspace:*",
     "@echohello/protocol": "workspace:*",
     "dotenv": "^17.2.3",
