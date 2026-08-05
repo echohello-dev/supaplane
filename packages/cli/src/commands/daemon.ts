@@ -1,5 +1,7 @@
 import { Command } from "commander";
 
+import { DEFAULT_HTTP_ENDPOINT } from "../connect.js";
+
 export const daemonCommand = new Command("daemon")
   .description("Control the Supaplane daemon (start, stop, status, log, pair)")
   .addCommand(
@@ -23,7 +25,7 @@ export const daemonCommand = new Command("daemon")
   .addCommand(
     new Command("status")
       .description("Show daemon status (queries the health endpoint)")
-      .option("--endpoint <url>", "daemon HTTP endpoint", "http://127.0.0.1:6767")
+      .option("--endpoint <url>", "daemon HTTP endpoint", DEFAULT_HTTP_ENDPOINT)
       .action(async (opts) => {
         const res = await fetch(`${opts.endpoint}/api/health`);
         if (!res.ok) {
@@ -37,7 +39,7 @@ export const daemonCommand = new Command("daemon")
   .addCommand(
     new Command("version")
       .description("Print the daemon version + protocol version")
-      .option("--endpoint <url>", "daemon HTTP endpoint", "http://127.0.0.1:6767")
+      .option("--endpoint <url>", "daemon HTTP endpoint", DEFAULT_HTTP_ENDPOINT)
       .action(async (opts) => {
         const res = await fetch(`${opts.endpoint}/api/version`);
         process.stdout.write(`${await res.text()}\n`);

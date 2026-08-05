@@ -8,6 +8,7 @@ import {
 
 import type { AgentManager } from "./agent/agent-manager.js";
 import type { WorkspaceRegistry } from "./workspace-registry.js";
+import type { WorktreeService } from "./worktree-service.js";
 
 export interface CommandContext {
   clientId: string;
@@ -18,6 +19,7 @@ export interface CommandContext {
 export interface CommandDispatcherOptions {
   workspaces: WorkspaceRegistry;
   agents: AgentManager;
+  worktrees: WorktreeService;
   broadcast: (event: ServerEvent) => void;
   logger: Logger;
 }
@@ -32,12 +34,14 @@ export interface CommandDispatcherOptions {
 export class CommandDispatcher {
   readonly #workspaces: WorkspaceRegistry;
   readonly #agents: AgentManager;
+  readonly #worktrees: WorktreeService;
   readonly #broadcast: (event: ServerEvent) => void;
   readonly #logger: Logger;
 
   constructor(options: CommandDispatcherOptions) {
     this.#workspaces = options.workspaces;
     this.#agents = options.agents;
+    this.#worktrees = options.worktrees;
     this.#broadcast = options.broadcast;
     this.#logger = options.logger.child({ module: "command-dispatcher" });
   }
@@ -106,10 +110,22 @@ export class CommandDispatcher {
         });
         return;
       }
+      case "git.checkout": {
+        void this.#guard(ctx, async () => {
+          const target =
+            cmd.target.kind === "pr"
+              ? { kind: "pr" as const, number: cmd.target.number }
+              : { kind: cmd.target.kind, name: cmd.target.name };
+          const affected = await this.#worktrees.checkout(cmd.workspaceId, target);
+          for (const workspace of affected) {
+            this.#broadcast({ kind: "workspace_state", workspace });
+          }
+        });
+        return;
+      }
       case "session.fork":
       case "diff.open":
       case "file.open":
-      case "git.checkout":
       case "permission.resolve": {
         this.#fail(
           ctx,
