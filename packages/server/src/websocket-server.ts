@@ -29,6 +29,8 @@ export interface WebsocketServerOptions {
   daemonLabel?: string;
   serverVersion: string;
   onCommand?: (cmd: ClientCommand, session: SessionRecord) => void;
+  /** Provider ids advertised in the `hello_ack` capabilities. */
+  providers?: readonly string[];
 }
 
 /**
@@ -49,6 +51,7 @@ export class SupaplaneWebsocketServer {
   #serverVersion: string;
   #daemonLabel: string | undefined;
   #onCommand?: (cmd: ClientCommand, session: SessionRecord) => void;
+  #providers: readonly string[];
 
   constructor(options: WebsocketServerOptions) {
     this.#logger = options.logger.child({ module: "ws-server" });
@@ -56,6 +59,7 @@ export class SupaplaneWebsocketServer {
     this.#authToken = options.authToken;
     this.#serverVersion = options.serverVersion;
     this.#daemonLabel = options.daemonLabel;
+    this.#providers = options.providers ?? [];
     if (options.onCommand) {
       this.#onCommand = options.onCommand;
     }
@@ -75,6 +79,11 @@ export class SupaplaneWebsocketServer {
 
   get sessions(): ReadonlyMap<WebSocket, SessionRecord> {
     return this.#sessions;
+  }
+
+  /** Install the command handler after construction (breaks the daemon/dispatcher init cycle). */
+  setCommandHandler(handler: (cmd: ClientCommand, session: SessionRecord) => void): void {
+    this.#onCommand = handler;
   }
 
   /** Broadcast a server event to all connected sessions that have subscribed to its topic. */
@@ -106,6 +115,7 @@ export class SupaplaneWebsocketServer {
             ctx: {
               serverId: this.#identity.serverId,
               serverVersion: this.#serverVersion,
+              providers: this.#providers,
               ...(this.#daemonLabel ? { daemonLabel: this.#daemonLabel } : {}),
               logger: log,
             },

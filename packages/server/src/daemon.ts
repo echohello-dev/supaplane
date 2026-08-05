@@ -6,6 +6,11 @@ import { loadOrCreateIdentity } from "./handshake.js";
 import { createHttpApp } from "./http-app.js";
 import { createLogger } from "./logger.js";
 import { resolveSupaplaneHome, SUPAPLANE_VERSION } from "./paths.js";
+import { AgentManager } from "./server/agent/agent-manager.js";
+import { HandleStore } from "./server/agent/handle-store.js";
+import { ClaudeAgentClient } from "./server/agent/providers/claude/claude-provider.js";
+import { CommandDispatcher } from "./server/command-dispatcher.js";
+import { WorkspaceRegistry } from "./server/workspace-registry.js";
 import { SupaplaneWebsocketServer } from "./websocket-server.js";
 
 export interface DaemonHandle {
@@ -15,6 +20,8 @@ export interface DaemonHandle {
   stop: () => Promise<void>;
   httpServer: ReturnType<typeof createServer>;
   wsServer: SupaplaneWebsocketServer;
+  agentManager: AgentManager;
+  workspaces: WorkspaceRegistry;
 }
 
 /**
@@ -54,13 +61,41 @@ export async function startDaemon(args?: {
   });
 
   const httpServer = createServer(httpApp);
+
+  const handleStore = new HandleStore(supaplaneHome);
+  const agentManager = new AgentManager({ handleStore, logger });
+  agentManager.registerProvider(new ClaudeAgentClient());
+  const workspaces = new WorkspaceRegistry();
+
   const wsServer = new SupaplaneWebsocketServer({
     httpServer,
     logger,
     identity,
     ...(config.daemonAuthToken ? { authToken: config.daemonAuthToken } : {}),
     serverVersion: SUPAPLANE_VERSION,
+    providers: agentManager.providerIds(),
   });
+
+  agentManager.onAgentEvent = (event) => wsServer.broadcast({ kind: "event", event });
+  agentManager.onSessionState = (session) => wsServer.broadcast({ kind: "session_state", session });
+
+  const dispatcher = new CommandDispatcher({
+    workspaces,
+    agents: agentManager,
+    broadcast: (event) => wsServer.broadcast(event),
+    logger,
+  });
+  wsServer.setCommandHandler((cmd, session) =>
+    dispatcher.handle(cmd, {
+      clientId: session.clientId,
+      sendError: (error) =>
+        wsServer.sendTo(session.socket, {
+          type: "error",
+          code: error.code,
+          message: error.message,
+        }),
+    }),
+  );
 
   await new Promise<void>((resolve, reject) => {
     const onError = (err: Error) => {
@@ -84,8 +119,11 @@ export async function startDaemon(args?: {
     supaplaneHome,
     httpServer,
     wsServer,
+    agentManager,
+    workspaces,
     async stop(): Promise<void> {
       logger.info("stopping daemon");
+      await agentManager.disposeAll();
       await new Promise<void>((resolve, reject) => {
         httpServer.close((err) => (err ? reject(err) : resolve()));
       });
