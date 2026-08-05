@@ -45,6 +45,17 @@ export class WorkspaceRegistry {
     return this.#byId.get(workspaceId);
   }
 
+  update(
+    workspaceId: string,
+    patch: Partial<Omit<WorkspaceState, "workspaceId" | "cwd">>,
+  ): WorkspaceState | undefined {
+    const workspace = this.#byId.get(workspaceId);
+    if (workspace === undefined) return undefined;
+    const updated: WorkspaceState = { ...workspace, ...patch, updatedAt: Date.now() };
+    this.#byId.set(workspaceId, updated);
+    return updated;
+  }
+
   list(): WorkspaceState[] {
     return [...this.#byId.values()];
   }
