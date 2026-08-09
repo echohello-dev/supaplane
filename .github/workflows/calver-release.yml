@@ -1,14 +1,23 @@
 name: calver-release
 
 on:
-  push:
+  workflow_dispatch:
+  pull_request:
+    types: [closed]
     branches: [main]
 
 permissions:
   contents: write
+  pull-requests: write
+
+concurrency:
+  group: calver-release
+  cancel-in-progress: false
 
 jobs:
-  release:
+  open-pr:
+    name: open release PR
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -17,20 +26,101 @@ jobs:
 
       - name: compute calver tag
         id: calver
-        run: |
-          base="$(date -u +%Y.%m.%d)"
-          git fetch --tags --quiet
-          tag="$base"
-          if git rev-parse -q --verify "refs/tags/$tag" > /dev/null; then
-            n=2
-            while git rev-parse -q --verify "refs/tags/$base-$n" > /dev/null; do
-              n=$((n + 1))
-            done
-            tag="$base-$n"
-          fi
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
-
-      - name: create release
-        run: gh release create "${{ steps.calver.outputs.tag }}" --generate-notes --title "${{ steps.calver.outputs.tag }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          base="$(date -u +%Y.%m.%d)"
+          tag="$base"
+          n=2
+          while git rev-parse -q --verify "refs/tags/$tag" > /dev/null \
+             || git ls-remote --exit-code --tags origin "refs/tags/$tag" > /dev/null 2>&1; do
+            tag="$base-$n"
+            n=$((n + 1))
+          done
+
+          previous="$(git describe --tags --abbrev=0 HEAD 2>/dev/null || true)"
+
+          if [ -n "$previous" ] && [ "$(git rev-list "$previous"..HEAD --count)" -eq 0 ]; then
+            echo "No commits since $previous — skipping release."
+            {
+              echo "skip=true"
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Changes since ${previous:-root} — opening release PR for $tag."
+          {
+            echo "skip=false"
+            echo "tag=$tag"
+            echo "previous=$previous"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: build release notes
+        if: steps.calver.outputs.skip != 'true'
+        run: |
+          set -euo pipefail
+          previous="${{ steps.calver.outputs.previous }}"
+          range="HEAD"
+          if [ -n "$previous" ]; then
+            range="$previous..HEAD"
+          fi
+          {
+            echo "## ${{ steps.calver.outputs.tag }}"
+            echo ""
+            if [ -n "$previous" ]; then
+              echo "Changes since [$previous](https://github.com/${{ github.repository }}/releases/tag/$previous):"
+            else
+              echo "Initial release."
+            fi
+            echo ""
+            git log "$range" --pretty=format:'- %s ([%h](https://github.com/${{ github.repository }}/commit/%H))'
+          } > release-notes.md
+
+      - name: open release PR
+        if: steps.calver.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="${{ steps.calver.outputs.tag }}"
+          branch="chore/release-${tag}"
+
+          if git ls-remote --exit-code --heads origin "$branch" > /dev/null 2>&1; then
+            echo "::error::Branch $branch already exists — close stale release PR or pick a new tag."
+            exit 1
+          fi
+
+          git checkout -b "$branch"
+          git -c user.name="github-actions[bot]" \
+             -c user.email="github-actions[bot]@users.noreply.github.com" \
+             commit --allow-empty -m "chore(release): cut ${tag}"
+          git push origin "$branch"
+
+          gh pr create \
+            --base main \
+            --head "$branch" \
+            --title "chore(release): ${tag}" \
+            --body-file release-notes.md
+
+  cut-release:
+    name: cut release
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && startsWith(github.head_ref, 'chore/release-')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: create tag and release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_HEAD_REF#chore/release-}"
+          git tag "$tag" HEAD
+          git push origin "$tag"
+          gh release create "$tag" \
+            --generate-notes \
+            --title "$tag"
