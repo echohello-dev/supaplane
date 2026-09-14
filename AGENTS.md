@@ -7,6 +7,7 @@ Supaplane is a local-first, multi-surface coding-agent workbench. A single super
 The architectural decisions are documented in `docs/` — read them before making non-trivial changes:
 
 - `docs/architecture.md` — overall architecture, package boundaries, build order
+- `docs/design.md` — Fold visual system; tokens in `docs/fold-tokens.css`
 - `docs/onboarding-relay.md` — pairing, relay, settings sync model
 - `docs/providers.md` — agent runtime integrations (OpenCode, Claude Code, Cursor, MCP)
 
@@ -88,7 +89,7 @@ Supaplane ships agent skills in two locations, both using the Paseo/Supaplane `S
 
 | Location                         | Audience                                                                                                              | Installed via                                  | Tracked?                                      |
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
-| `skills/<name>/SKILL.md` (root)  | **External** users — published for the world to install                                                               | `npx skills add echohello-dev/supaplane`       | ✅ committed                                  |
+| `skills/<name>/SKILL.md` (root)  | **External** users — published for the world to install                                                               | `npx skills add supaplane/supaplane`       | ✅ committed                                  |
 | `.agents/skills/<name>/SKILL.md` | **Internal** — auto-installed machine-local copies of third-party skills (e.g. `impeccable`, vendor-specific tooling) | Tool hooks (lefthook, opencode, claude, codex) | ✅ committed, with scoped `.gitignore` inside |
 
 The `.agents/skills/` convention keeps every skill in the same shape regardless of which tool installed it, so the same `SKILL.md` frontmatter (name + description) is machine-parseable everywhere. **Do not blanket-ignore `.agents/`** — only ignore caches/`node_modules`/dist inside the per-skill subdirs (the gitignore already does this scoped).

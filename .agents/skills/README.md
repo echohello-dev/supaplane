@@ -24,7 +24,7 @@ agent skills into this directory. Keeping every skill — curated or auto-instal
 ## What does NOT go here
 
 Supaplane's curated, published skills (the ones discoverable via
-`npx skills add echohello-dev/supaplane`) belong in the **root** `skills/`
+`npx skills add supaplane/supaplane`) belong in the **root** `skills/`
 tree. See `../../skills/supaplane/SKILL.md` for the worked example.
 
 ## Skills convention

@@ -5,9 +5,9 @@
 **Bring your coding agents and friends.**
 Import your harnesses and fly them in parallel from desktop, web, or phone.
 
-[Website](https://supaplane.com) · [Architecture](docs/architecture.md) · [Onboarding](docs/onboarding-relay.md) · [Providers](docs/providers.md) · [Development](docs/development.md)
+[Website](https://supaplane.com) · [Architecture](docs/architecture.md) · [Design](docs/design.md) · [Onboarding](docs/onboarding-relay.md) · [Providers](docs/providers.md) · [Development](docs/development.md)
 
-[![License: MIT](https://img.shields.io/github/license/echohello-dev/supaplane)](LICENSE)
+[![License: MIT](https://img.shields.io/github/license/supaplane/supaplane)](LICENSE)
 [![Node 22+](https://img.shields.io/badge/node-22%2B-blue)](https://nodejs.org)
 [![Bun](https://img.shields.io/badge/package%20manager-bun-f9f1e1)](https://bun.sh)
 
@@ -19,7 +19,7 @@ Supaplane is a multi-surface workbench for coding agents. Bring Claude Code, Cod
 
 A single supervised daemon owns agent lifecycle, worktrees, and remote access. Surfaces are thin clients over that daemon, not separate apps fighting for the same repo.
 
-Formerly Spanner (née Pidex, née OpenPi). Personal project under [echohello](https://echohello.dev). Companion installer: [`hoist`](https://github.com/echohello-dev/hoist).
+Formerly Spanner (née Pidex, née OpenPi). Personal project, hosted at [supaplane.com](https://supaplane.com). Companion installer: [`hoist`](https://github.com/echohello-dev/hoist).
 
 ## How it sits in the sky
 
@@ -76,7 +76,7 @@ packages/
 ├── app/        # Expo 54 + RN mobile
 └── relay/      # E2E-encrypted relay (post-MVP)
 
-docs/           # Architecture, onboarding, providers, development
+docs/           # Architecture, design, onboarding, providers, development
 ```
 
 ## Provider priorities (MVP)
