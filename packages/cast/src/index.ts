@@ -1,0 +1,102 @@
+export {
+  TAU,
+  clamp,
+  mix,
+  ss,
+  fmt,
+  ptStr,
+  outline,
+  halfWidthAt,
+  smoothClosed,
+  ik,
+  sweep,
+  armWidth,
+  armShape,
+  crease,
+  eyePath,
+  mouthPath,
+  PLANE,
+  PLANE_CREASE,
+  FX_SHAPES,
+  type Pt,
+  type Deform,
+  type OutlineParams,
+  type ArmParams,
+  type IkResult,
+  type ShapePath,
+  type EyeType,
+  type MouthType,
+} from "./geometry.js";
+
+export {
+  BASE,
+  PRESETS,
+  PROPS,
+  HATS,
+  NAMES,
+  ARM_LENGTHS,
+  VIEWS,
+  rng,
+  randomParams,
+  describe,
+  withMetrics,
+  shoulderPoints,
+  type PresetName,
+  type PropName,
+  type HatName,
+  type BodyShape,
+  type PassengerParams,
+  type RuntimeParams,
+  type Rng,
+} from "./params.js";
+
+export {
+  PALETTES,
+  PALETTE_NAMES,
+  resolvePalette,
+  type Palette,
+  type PaletteName,
+} from "./palettes.js";
+
+export {
+  CHANNELS,
+  zeroChannels,
+  createSpringState,
+  type ChannelName,
+  type ChannelValues,
+  type Targets,
+  type SpringState,
+} from "./springs.js";
+
+export {
+  ACTIONS,
+  ACTION_NAMES,
+  isLoop,
+  restHands,
+  handTarget,
+  type Action,
+  type ActionContext,
+  type ActionHost,
+  type ActionName,
+  type ActionResult,
+  type FaceState,
+} from "./actions.js";
+
+export {
+  Passenger,
+  HALO,
+  type View,
+  type PassengerOpts,
+  type Burst,
+  type ArmChain,
+  type Pose,
+} from "./passenger.js";
+export {
+  Stage,
+  clock,
+  stepAll,
+  startClock,
+  type StageOpts,
+  type Link,
+  type OverlapMode,
+} from "./stage.js";

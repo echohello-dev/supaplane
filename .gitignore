@@ -97,3 +97,5 @@ packages/*/src/**/generated/
 .agents/**/dist/
 .agents/**/*.log
 .agents/**/.DS_Store
+# cast demo build
+packages/cast/demo-dist/

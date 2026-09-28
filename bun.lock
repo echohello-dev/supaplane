@@ -38,6 +38,15 @@
         "typescript": "~5.9.2",
       },
     },
+    "packages/cast": {
+      "name": "@echohello/cast",
+      "version": "0.0.0",
+      "devDependencies": {
+        "typescript": "^5.9.3",
+        "vite": "^8.0.0",
+        "vitest": "^2.1.0",
+      },
+    },
     "packages/cli": {
       "name": "@echohello/cli",
       "version": "0.0.0",
@@ -361,6 +370,8 @@
     "@chenglou/pretext": ["@chenglou/pretext@0.0.6", "", {}, "sha512-U10s4tFeyu3oVHfXuNWwZSKqHXefhaigpcBkGj60qQFRJ+yUoQ+ez3cGJelP7BWDAB58HCgjcTSmOcg+77afBQ=="],
 
     "@echohello/app": ["@echohello/app@workspace:packages/app"],
+
+    "@echohello/cast": ["@echohello/cast@workspace:packages/cast"],
 
     "@echohello/cli": ["@echohello/cli@workspace:packages/cli"],
 

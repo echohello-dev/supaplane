@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>The Cast · Supaplane</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script type="module" src="./main.ts"></script>
+  </head>
+  <body>
+    <header class="bar">
+      <a class="brand" href="#family">supaplane <span>/ the cast</span></a>
+      <nav>
+        <a href="#family">Family</a><a href="#turnaround">Turnaround</a
+        ><a href="#variants">Variants</a><a href="#lab">Rig lab</a><a href="#parade">Parade</a
+        ><a href="#sheet">Pose sheet</a>
+      </nav>
+      <label class="pal"
+        >Overlap
+        <select id="overlap">
+          <option value="outline">Outline</option>
+          <option value="shadow">Shadow</option>
+          <option value="none">None</option>
+        </select></label
+      >
+      <label class="pal"
+        >Palette
+        <select id="palette"></select
+      ></label>
+    </header>
+
+    <main>
+      <section id="family" class="block">
+        <div class="head">
+          <h1>The family</h1>
+          <p>
+            Every limb is rigged: IK arms with the negative-stroke line, stepping legs merged into
+            one gooey silhouette, spring physics on every pose value. Click a passenger to boop
+            them; the cursor steers their eyes.
+          </p>
+        </div>
+        <svg
+          id="familyStage"
+          class="stage wide"
+          viewBox="0 0 1200 560"
+          role="img"
+          aria-label="Animated passenger family"
+        ></svg>
+        <div class="controls">
+          <div class="chips" id="familyActions"></div>
+          <div class="toggles">
+            <button id="familyWalk">Walk together</button>
+            <label><input type="checkbox" id="familyHold" checked /> Hold hands</label>
+            <label><input type="checkbox" id="familyAuto" checked /> Autopilot</label>
+            <label><input type="checkbox" class="rigToggle" /> Show rig</label>
+            <label><input type="checkbox" class="grainToggle" checked /> Grain</label>
+            <button data-download="familyStage">SVG</button>
+            <a class="clean" href="?clean=family&ratio=16:9">Clean embed ↗</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="turnaround" class="block">
+        <div class="head">
+          <h1>Every angle</h1>
+          <p>
+            The same soft shoulders and rounded arms, all the way around. Compare front,
+            three-quarter, profile and back views, or turn a passenger while they walk and wave.
+          </p>
+        </div>
+        <div class="turn-workbench">
+          <svg
+            id="turnStage"
+            class="stage"
+            viewBox="0 0 440 350"
+            role="img"
+            aria-label="Rotating passenger preview"
+          ></svg>
+          <div class="turn-controls">
+            <div class="row selects">
+              <label
+                >Passenger
+                <select id="turnShape"></select></label
+              ><label
+                >Arms
+                <select id="turnArms"></select
+              ></label>
+            </div>
+            <div class="chips" id="turnActions" aria-label="Turnaround movement"></div>
+            <label class="turn-angle"
+              >Viewing angle <output id="turnAngleValue">0°</output
+              ><input id="turnAngle" type="range" min="-180" max="180" step="1" value="0"
+            /></label>
+            <div class="chips" id="turnViews" aria-label="Choose viewing angle"></div>
+            <div class="row">
+              <button id="turnSpin" aria-pressed="true">Auto rotate</button
+              ><label><input type="checkbox" class="rigToggle" /> Show rig</label>
+            </div>
+            <div class="row">
+              <button id="turnFromLab">Use lab passenger</button
+              ><button id="turnToLab">Edit in rig lab</button>
+            </div>
+            <div class="row">
+              <button id="turnDownload">Download turnaround SVG</button
+              ><a class="clean" href="?clean=turnaround&ratio=4:3">Clean embed ↗</a>
+            </div>
+          </div>
+        </div>
+        <div class="turn-grid" id="turnGrid"></div>
+      </section>
+
+      <section id="variants" class="block">
+        <div class="head">
+          <h1>Variants</h1>
+          <p>
+            Seeded passengers from the Passenger Standard: body proportions, dome and base
+            curvature, leg stance, arm reach, face placement, props and hats. Click a card to cycle
+            its feeling; edit sends it to the rig lab.
+          </p>
+        </div>
+        <div class="arm-study" id="armStudy">
+          <div class="controls top">
+            <span class="study-title">Same passenger, four arm lengths</span>
+            <div class="chips" id="armActions" aria-label="Compare arm movements"></div>
+          </div>
+          <div class="arm-grid" id="armGrid"></div>
+        </div>
+        <div class="controls top">
+          <button id="reroll">Reroll all</button>
+          <label
+            >Everyone
+            <select id="everyone">
+              <option value="">(own mind)</option>
+            </select></label
+          >
+          <label><input type="checkbox" id="gridAuto" checked /> Autopilot</label>
+          <span class="muted" id="seedLabel"></span>
+        </div>
+        <div class="grid" id="grid"></div>
+      </section>
+
+      <section id="lab" class="block lab">
+        <div class="labStage">
+          <div class="head">
+            <h1>Rig lab</h1>
+            <p>
+              One passenger with every rig parameter exposed. The coral overlay is the skeleton:
+              shoulder → elbow → hand, hip → foot, and a bending spine that carries the face.
+            </p>
+          </div>
+          <svg
+            id="labStage"
+            class="stage"
+            viewBox="0 0 640 560"
+            role="img"
+            aria-label="Rig lab passenger"
+          ></svg>
+          <div class="chips" id="labActions"></div>
+        </div>
+        <aside class="panel">
+          <div class="row">
+            <button id="labRandom">Randomise</button
+            ><button id="labPreset" data-i="0">Preset: classic</button>
+          </div>
+          <div class="row arm-presets" id="armPresets" aria-label="Arm length presets"></div>
+          <div class="row arm-presets" id="viewPresets" aria-label="Viewing angle presets"></div>
+          <div id="sliders"></div>
+          <div class="row selects">
+            <label
+              >Prop
+              <select id="labProp"></select
+            ></label>
+            <label
+              >Hat
+              <select id="labHat"></select
+            ></label>
+            <label
+              >Hand
+              <select id="labSide">
+                <option value="-1">left</option>
+                <option value="1">right</option>
+              </select></label
+            >
+          </div>
+          <div class="row">
+            <label
+              ><input type="checkbox" class="rigToggle" data-default="1" checked /> Show rig</label
+            ><label><input type="checkbox" class="grainToggle" checked /> Grain</label>
+          </div>
+          <div class="row">
+            <button id="labCopy">Copy JSON</button><button data-download="labStage">SVG</button
+            ><button id="labToSheet">Pose sheet ↓</button>
+          </div>
+          <pre id="labJson"></pre>
+        </aside>
+      </section>
+
+      <section id="parade" class="block">
+        <div class="head">
+          <h1>Parade</h1>
+          <p>
+            A looping crowd for hero banners and video: walkers, a runner, a hopping tot, a paper
+            plane thrown mid-stride.
+          </p>
+        </div>
+        <svg
+          id="paradeStage"
+          class="stage wide"
+          viewBox="0 0 1600 520"
+          role="img"
+          aria-label="Looping parade of passengers"
+        ></svg>
+        <div class="controls">
+          <div class="toggles">
+            <label
+              >Speed <input type="range" id="paradeSpeed" min="0.3" max="2" step="0.1" value="1"
+            /></label>
+            <button id="paradeShuffle">New crowd</button>
+            <label><input type="checkbox" class="rigToggle" /> Show rig</label>
+            <label><input type="checkbox" class="grainToggle" checked /> Grain</label>
+            <button data-download="paradeStage">SVG</button>
+            <a class="clean" href="?clean=parade&ratio=16:9">Clean embed ↗</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="sheet" class="block">
+        <div class="head">
+          <h1>Pose sheet</h1>
+          <p>
+            The rig-lab passenger frozen at a key frame of every action. Download as one SVG to drop
+            into Figma as a model sheet (the goo filter flattens to plain shapes there).
+          </p>
+        </div>
+        <div class="controls top">
+          <button id="sheetRefresh">Refresh from lab</button
+          ><button id="sheetDownload">Download sheet SVG</button>
+        </div>
+        <div class="sheet" id="sheetGrid"></div>
+      </section>
+    </main>
+  </body>
+</html>
