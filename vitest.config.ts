@@ -10,5 +10,6 @@ export default defineConfig({
       "packages/cli/src/**/*.{test,spec}.{ts,tsx,js,jsx}",
     ],
     exclude: ["**/dist/**", "**/node_modules/**"],
+    setupFiles: ["./vitest.setup.ts"],
   },
 });
