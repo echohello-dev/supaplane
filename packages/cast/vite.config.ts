@@ -1,6 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 
 const packageDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(packageDir, "../..");
@@ -18,5 +18,9 @@ export default defineConfig({
     outDir: "../demo-dist",
     emptyOutDir: true,
     sourcemap: true,
+  },
+  test: {
+    root: packageDir,
+    include: ["src/**/*.test.ts"],
   },
 });
