@@ -17,6 +17,7 @@ If you need to know _why_ a decision was made, the build-research notes in the o
 
 - Daemon (HTTP + WS): `17687` — avoids Paseo (`6767`), HTTP (`8080`), Metro/Expo (`8081`).
 - Web renderer (Vite): `5179` — sits next to Vite's default `5173` so it's recognisable.
+- Cast demo (Vite): `5182` — `bun run --cwd packages/cast dev`.
 - Override with `SUPAPLANE_LISTEN_PORT`, `SUPAPLANE_DAEMON_PORT`, `SUPAPLANE_WEB_PORT`, or `VITE_PORT` env vars.
 
 ## Build / dev commands
@@ -43,6 +44,7 @@ mise run dev:all      # all three concurrently
 protocol   ← client ← server ← cli, web, desktop, app
                       ↑
                      relay (post-MVP)
+cast (standalone; imported by web and marketing surfaces)
 ```
 
 - `@echohello/protocol` has zero deps on other packages. It owns Zod schemas and binary frame codecs.
@@ -53,6 +55,7 @@ protocol   ← client ← server ← cli, web, desktop, app
 - `@echohello/desktop` depends on `@echohello/server` + `@echohello/web`. It is the Electron shell that supervises the daemon.
 - `@echohello/app` depends on `@echohello/protocol` + `@echohello/client`. It is the Expo + RN mobile renderer.
 - `@echohello/relay` (post-MVP) depends on `@echohello/protocol`. It is the relay server + client SDK for E2E-encrypted remote access.
+- `@echohello/cast` has zero deps on other packages. It owns the rigged passenger SVG rig (bodies, limbs, faces, props, palettes, actions) and its demo playground (`packages/cast/demo`, port `5182`).
 
 Never import backwards — if you find yourself needing to import `@echohello/web` from `@echohello/server`, you have a design problem.
 
@@ -89,7 +92,7 @@ Supaplane ships agent skills in two locations, both using the Paseo/Supaplane `S
 
 | Location                         | Audience                                                                                                              | Installed via                                  | Tracked?                                      |
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
-| `skills/<name>/SKILL.md` (root)  | **External** users — published for the world to install                                                               | `npx skills add supaplane/supaplane`       | ✅ committed                                  |
+| `skills/<name>/SKILL.md` (root)  | **External** users — published for the world to install                                                               | `npx skills add supaplane/supaplane`           | ✅ committed                                  |
 | `.agents/skills/<name>/SKILL.md` | **Internal** — auto-installed machine-local copies of third-party skills (e.g. `impeccable`, vendor-specific tooling) | Tool hooks (lefthook, opencode, claude, codex) | ✅ committed, with scoped `.gitignore` inside |
 
 The `.agents/skills/` convention keeps every skill in the same shape regardless of which tool installed it, so the same `SKILL.md` frontmatter (name + description) is machine-parseable everywhere. **Do not blanket-ignore `.agents/`** — only ignore caches/`node_modules`/dist inside the per-skill subdirs (the gitignore already does this scoped).

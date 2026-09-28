@@ -1,0 +1,25 @@
+{
+  "name": "@echohello/cast",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:clean": "rm -rf dist && tsc -p tsconfig.json",
+    "typecheck": "tsgo -p tsconfig.typecheck.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev": "vite",
+    "lint": "oxlint src"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite": "^8.0.0",
+    "vitest": "^2.1.0"
+  }
+}
